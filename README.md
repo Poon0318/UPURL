@@ -35,14 +35,14 @@ If Node.js is not installed, install it with Homebrew using `brew install node`,
 
 ## Host the app publicly
 
-The Netlify site hosts only the static React frontend. The FastAPI backend must also be deployed to a public Python host; the provided `render.yaml` configures a Render web service and persistent disk for the SQLite database. The persistent disk requires a paid Render instance. The backend runs the website checks, so it must remain available for continuous monitoring.
+The Netlify site hosts only the static React frontend. The FastAPI backend must also be deployed to a public Python host. The provided `render.yaml` configures a Render Free web service, which avoids a paid persistent disk but has important limitations: free services can spin down after inactivity, and their local filesystem is ephemeral. This setup is suitable for trying the shared dashboard, not dependable continuous monitoring or permanent storage. Monitoring pauses while the backend is asleep, and its SQLite website configuration and history can be lost when the service restarts or redeploys. The backend receives regular requests while someone is viewing the dashboard, which may keep it awake during that time.
 
 1. Push this project to a Git provider such as GitHub, then create a Render Blueprint from that repository and apply `render.yaml`.
 2. Wait for the Render service to deploy. Confirm `https://<your-render-service>.onrender.com/api/health` returns `{"status":"ok"}`.
 3. In the Netlify site settings, set the environment variable `VITE_API_URL` to `https://<your-render-service>.onrender.com/api` (include `/api`). Then trigger a new deploy. Vite embeds this value during the frontend build; changing it requires rebuilding and redeploying the site.
 4. In Render, set `CORS_ORIGINS` to a comma-separated list of exact frontend origins, including `https://idyllic-speculoos-ddc1b8.netlify.app`. Add any custom domain used by the site as another origin, with no trailing slash, and redeploy the backend.
 
-The SQLite database and monitoring history are stored on Render's persistent disk at `/var/data/monitor.db`. Keep the disk attached when redeploying; the local `data/monitor.db` is not automatically uploaded. For production use, review the target websites before adding them, because the hosted backend will make outbound HTTP requests to each configured URL.
+On the Free service, SQLite uses the temporary path `/tmp/monitor.db`; the local `data/monitor.db` is not uploaded. Export or otherwise back up any data you need before a restart or redeploy. For durable history and uninterrupted checks, use a paid always-on backend with persistent storage or change the app to use a separately hosted persistent database and an always-running scheduler. For production use, review the target websites before adding them, because the hosted backend will make outbound HTTP requests to each configured URL.
 
 ## Configure websites
 

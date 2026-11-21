@@ -2,19 +2,15 @@ services:
   - type: web
     name: upurl-api
     runtime: python
-    plan: starter
+    plan: free
     buildCommand: pip install -r backend/requirements.txt
     startCommand: PYTHONPATH=backend uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
-    disk:
-      name: upurl-data
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.11
       - key: DATABASE_PATH
-        value: /var/data/monitor.db
+        value: /tmp/monitor.db
       - key: CORS_ORIGINS
         value: http://localhost:5173,http://127.0.0.1:5173,https://idyllic-speculoos-ddc1b8.netlify.app
       - key: CHECK_INTERVAL_SECONDS
