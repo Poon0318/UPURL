@@ -1,0 +1,4 @@
+name,expected_url,expected_status_code,expected_final_url,expected_text,enabled,allow_scheme_mismatch
+Sample: Example Domain,https://example.com/,200,,,true,false
+Sample: HTTPBin Success,https://httpbin.org/status/200,200,,,true,false
+Sample: HTTPBin 404 (intentional),https://httpbin.org/status/404,200,,,true,false
